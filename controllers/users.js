@@ -45,7 +45,7 @@ export const userLogin = async(req,res)=>{
         if(!passCompare){
             return res.status(400).json({status:false, error:"Incorrect Credentials!"})
         }
-        res.status(200).json({ status:true, token:{id:findUser.id, subscription:findUser.subscription}})
+        res.status(200).json({ status:true, token:{id:findUser.id, status:findUser.status}})
     } catch (error) {
         res.status(400).json({status:false, error:error.message})
     }
@@ -69,13 +69,22 @@ export const userPayment = async(req,res)=>{
 }
 
 export const setActive = async(req,res)=>{
+    const {date,price,type,time,plan} = req.body;
     try {
         let user = await userRegData.findById(req.params.id)
         if(!user){
             return res.status(400).json({status:false, error:"some Error"})
         }
 
-        user = await userRegData.findByIdAndUpdate(req.params.id,{subscription:req.body.plan}, {new:true})
+        user = await userRegData.findByIdAndUpdate(req.params.id,{
+            status:true,
+            date: date,
+            price:price,
+            type:type,
+            time:time,
+            plan:plan
+            
+        }, {new:true})
 
       res.status(201).json({status:true})
         
@@ -91,7 +100,7 @@ export const cancelSubscription = async(req,res)=>{
             return res.status(400).json({status:false, error:"some Error"})
         }
 
-        user = await userRegData.findByIdAndUpdate(req.params.id,{subscription:-1}, {new:true})
+        user = await userRegData.findByIdAndUpdate(req.params.id,{status:false}, {new:true})
 
       res.status(201).json({status:true})
         
@@ -101,7 +110,6 @@ export const cancelSubscription = async(req,res)=>{
 }
 
 export const getData=async(req,res)=>{
-    let user = await userRegData.findById(req.params.id)
-
+    let user = await userRegData.findById(req.params.id).select("-password");
     res.status(200).json(user);
 }

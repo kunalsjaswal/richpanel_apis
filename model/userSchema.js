@@ -4,10 +4,15 @@ const userSchema = mongoose.Schema({
     username:String,
     email:String,
     password:String,
-    subscription:{
-        type:Number,
-        default:-1
-    }
+    status:{
+        type:Boolean,
+        default:false
+    },
+    date:String,
+    price:Number,
+    type:String,
+    time:String,
+    plan:Number
 })
 
 const userRegData  = mongoose.model('newUser', userSchema)
